@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install
+        run: python -m pip install -e ".[dev]"
+      - name: Ruff lint
+        run: ruff check .
+      - name: Ruff format check
+        run: ruff format --check .
+      - name: Tests
+        # POSIX-only tests (file permissions, named pipes) run on Ubuntu and
+        # are skipped on Windows.
+        run: pytest
+      - name: CLI smoke test
+        shell: bash
+        run: bash .github/scripts/smoke.sh
+
+  build:
+    name: Build and test distributions
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Build wheel and sdist
+        run: |
+          python -m pip install build
+          python -m build
+      - name: List archive contents
+        run: |
+          python -m zipfile -l dist/*.whl
+          python -m tarfile -l dist/*.tar.gz
+      - name: Check the version matches the tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          version="$(PYTHONPATH=src python -c 'import md_ocr_cleaner; print(md_ocr_cleaner.__version__)')"
+          echo "package version $version, tag $GITHUB_REF_NAME"
+          test "v$version" = "$GITHUB_REF_NAME"
+      - name: Install the wheel in a clean environment
+        run: |
+          python -m venv "$RUNNER_TEMP/wheel-env"
+          "$RUNNER_TEMP/wheel-env/bin/python" -m pip install dist/*.whl
+      - name: Smoke-test the installed wheel
+        run: |
+          export PATH="$RUNNER_TEMP/wheel-env/bin:$PATH"
+          cd "$RUNNER_TEMP"
+          python -c "import md_ocr_cleaner, sys; assert 'wheel-env' in md_ocr_cleaner.__file__, md_ocr_cleaner.__file__"
+          bash "$GITHUB_WORKSPACE/.github/scripts/smoke.sh"
+      - name: Install the sdist in a clean environment
+        run: |
+          python -m venv "$RUNNER_TEMP/sdist-env"
+          "$RUNNER_TEMP/sdist-env/bin/python" -m pip install dist/*.tar.gz
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/sdist-env/bin/md-ocr-clean" --version
+      - name: Upload distributions
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error

@@ -1,0 +1,52 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Build and packaging artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Editors and OS files
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Local tool output: cleaned documents, backups, JSON reports, and the
+# atomic-write temporary files (.NAME.XXXXXXXX.tmp)
+*.cleaned.md
+*.bak
+report*.json
+*.report.json
+*.tmp
+
+# Profiler and scratch output
+*.prof
+*.pstats
+p.out
+prof.out
+scratch/
+
+# Local secrets and credentials
+.env
+.env.*
+*.pem
+*.key
+.pypirc

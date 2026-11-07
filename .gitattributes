@@ -1,0 +1,4 @@
+# Store and check out text files with LF on every platform. CRLF and mixed
+# line-ending inputs are built in test code, never stored as files, and shell
+# scripts must stay LF for bash on Windows runners.
+* text=auto eol=lf
