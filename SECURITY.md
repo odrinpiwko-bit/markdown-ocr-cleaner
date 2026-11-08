@@ -2,9 +2,8 @@
 
 ## Supported versions
 
-Markdown OCR Cleaner is in early development. Security fixes are made for the
-latest released version only. Until the first release, the current
-development version is the only supported version.
+Markdown OCR Cleaner is alpha software. Security fixes are made for the
+latest release only. The first release is 0.1.0.
 
 ## Reporting a vulnerability
 

@@ -1,6 +1,6 @@
 # Markdown OCR Cleaner
 
-> **Status: alpha, not yet released.** Three conservative whitespace
+> **Status: alpha, version 0.1.0.** Three conservative whitespace
 > rules, two detect-only rules, and three opt-in destructive rules
 > (page-number removal, hyphen joining, paragraph reconstruction) are
 > implemented. Header/footer handling is **not implemented yet**. Nothing
@@ -532,14 +532,22 @@ lists each change. Document content is never printed to stdout.
   configurable thresholds.
 - Multiple input files, globs, and `--output-dir` (planned after 0.1.0).
 
-## Installation (development)
+## Installation
 
-Requires Python 3.11 or newer.
+Requires Python 3.11 or newer; tested with Python 3.11, 3.12, and 3.13 on
+Ubuntu and Windows. There are no runtime dependencies. The package is not
+published on PyPI; install it from a source checkout:
 
 ```bash
+git clone https://github.com/odrinpiwko-bit/markdown-ocr-cleaner.git
+cd markdown-ocr-cleaner
 python -m venv .venv
-.venv/bin/python -m pip install -e ".[dev]"   # Windows: .venv\Scripts\python
+.venv/bin/python -m pip install .           # Windows: .venv\Scripts\python
+.venv/bin/python -m pip install -e ".[dev]" # for development (tests, Ruff)
 ```
+
+The tool runs entirely locally: no network access, no telemetry, and no
+subprocesses.
 
 ## Contributing
 

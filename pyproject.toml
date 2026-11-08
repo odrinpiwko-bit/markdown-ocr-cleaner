@@ -40,6 +40,12 @@ classifiers = [
 ]
 dependencies = []
 
+[project.urls]
+Homepage = "https://github.com/odrinpiwko-bit/markdown-ocr-cleaner"
+Repository = "https://github.com/odrinpiwko-bit/markdown-ocr-cleaner"
+Issues = "https://github.com/odrinpiwko-bit/markdown-ocr-cleaner/issues"
+Changelog = "https://github.com/odrinpiwko-bit/markdown-ocr-cleaner/blob/main/CHANGELOG.md"
+
 [project.optional-dependencies]
 dev = [
     "build>=1.2",
